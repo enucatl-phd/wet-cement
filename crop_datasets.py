@@ -13,6 +13,8 @@ def main(inputname):
     max_x = 750
     max_y = 1000
     datasets = []
+    outputname = os.path.join("data", os.path.basename(inputname))
+    print(outputname)
     with h5py.File(outputname) as outh5file:
         with h5py.File(inputname, "r") as h5file:
             group = h5file["/entry/data"]
