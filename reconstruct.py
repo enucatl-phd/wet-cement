@@ -4,19 +4,17 @@ import os
 from tqdm import tqdm
 
 def main():
-    input_list = [
-        os.path.abspath(os.path.join("data", os.path.basename(f)).strip())
-        for f in open("datasets.csv").readlines()]
-    flats = [input_list[0]] + input_list[-9:]
-    data = input_list[1:-10]
-    print(flats)
+    data = open("datasets.csv").readlines()
+    flat = "/sls/X02DA/data/e14980/Data10/disk2/High_Energy_Setup/TITLIS_DATA/2017_03_27/170327.115258642953.h5"
+    print(flat)
     print(data)
     for d in tqdm(data):
         subprocess.check_call(
             "dpc_radiography\
-            --group /entry/data\
+            --overwrite\
+            --group /entry/data/th_0\
             --drop_last {0} {1}\
-            ".format(d, flats[0]),
+            ".format(d.strip(), flat),
             cwd="../dpc_reconstruction",
             shell=True,
         )

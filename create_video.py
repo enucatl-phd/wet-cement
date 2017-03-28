@@ -14,25 +14,43 @@ def main(input_files):
     metadata = {
         "title": "Movie test",
     }
-    writer = FFMpegWriter(fps=10, metadata=metadata)
+    writer = FFMpegWriter(fps=5, metadata=metadata)
     figure = plt.figure()
-    input_files = input_files[:300]
-    with writer.saving(figure, "writer_test.mp4", 100):
-        for input_file in tqdm(input_files):
-            h5file = h5py.File(input_file)
-            reconstruction = h5file["postprocessing/dpc_reconstruction"][...]
-            min_x = 0
-            max_x = -1
-            min_y = 200
-            max_y = 400
-            dark_field = reconstruction[min_y:max_y, min_x:max_x, 2]
-            absorption = reconstruction[min_y:max_y, min_x:max_x, 0]
-            dataset = np.log(dark_field) / np.log(absorption)
-            limits = stats.mstats.mquantiles(dataset, prob=[0.1, 0.9])
-            image = plt.imshow(dataset, interpolation="none")
-            image.set_clim(*limits)
-            writer.grab_frame()
+    ax = figure.add_subplot(111)
+    input_files = input_files[:100]
+    test_file = input_files[0]
+    test_reconstruction = h5py.File(
+        test_file)["postprocessing/dpc_reconstruction"][...]
+    min_x = 300
+    max_x = 700
+    min_y = 100
+    max_y = 400
+    dark_field = test_reconstruction[min_y:max_y, min_x:max_x, 2]
+    absorption = test_reconstruction[min_y:max_y, min_x:max_x, 0]
+    test_dataset = np.log(dark_field) / np.log(absorption)
+    limits = stats.mstats.mquantiles(test_dataset, prob=[0.4, 0.9])
+    print(limits)
+    plt.tight_layout()
+    im = ax.imshow(test_dataset, interpolation="none")
 
+    def update_img(input_file):
+        h5file = h5py.File(input_file)
+        reconstruction = h5file["postprocessing/dpc_reconstruction"][...]
+        dark_field = reconstruction[min_y:max_y, min_x:max_x, 2]
+        absorption = reconstruction[min_y:max_y, min_x:max_x, 0]
+        dataset = np.log(dark_field) / np.log(absorption)
+        im.set_data(dataset)
+
+    ani = manimation.FuncAnimation(
+        figure,
+        update_img,
+        tqdm(input_files),
+        interval=100)
+
+    dpi=100
+    writer = manimation.writers["avconv"](fps=10)
+    ani.save("writer_test.mp4", writer=writer, dpi=dpi)
+        
 
 if __name__ == "__main__":
     main()

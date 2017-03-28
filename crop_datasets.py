@@ -9,16 +9,16 @@ import os
 @click.command()
 @click.argument("inputname", type=click.Path(exists=True))
 def main(inputname):
-    min_x = 600
-    max_x = 750
-    min_y = 550
-    max_y = 900
+    min_x = 100
+    max_x = 400
+    min_y = 300
+    max_y = 700
     outputname = os.path.join("data", os.path.basename(inputname))
     print(outputname)
     with h5py.File(outputname) as outh5file:
         with h5py.File(inputname, "r") as h5file:
-            group = h5file["/entry/data"]
-            outputgroup = outh5file.require_group("/entry/data")
+            group = h5file["/entry/data/th_0"]
+            outputgroup = outh5file.require_group("/entry/data/th_0")
             for dataset in group:
                 new_dataset = group[dataset][min_y:max_y, min_x:max_x]
                 # limits = stats.mstats.mquantiles(
