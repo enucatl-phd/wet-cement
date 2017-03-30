@@ -17,7 +17,7 @@ def main(input_files):
     writer = FFMpegWriter(fps=5, metadata=metadata)
     figure = plt.figure()
     ax = figure.add_subplot(111)
-    input_files = input_files[:100]
+    # input_files = input_files[:100]
     test_file = input_files[0]
     test_reconstruction = h5py.File(
         test_file)["postprocessing/dpc_reconstruction"][...]
@@ -31,7 +31,11 @@ def main(input_files):
     limits = stats.mstats.mquantiles(test_dataset, prob=[0.4, 0.9])
     print(limits)
     plt.tight_layout()
-    im = ax.imshow(test_dataset, interpolation="none")
+    im = ax.imshow(
+        test_dataset,
+        interpolation="none",
+        clim=limits)
+    cbar = figure.colorbar(im, ax=ax)
 
     def update_img(input_file):
         h5file = h5py.File(input_file)
