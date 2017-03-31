@@ -28,9 +28,9 @@ namespace :analysis do
     sh "python #{f.source} #{f.prerequisites[1]} #{f.name}"
   end
 
-  desc "plot position with R"
-  file "data/position.png" => ["plot_position.R", "data/counts.csv"] do |f|
-    sh "./#{f.source} -f #{f.prerequisites[1]} -o #{f.name}"
+  desc "contrast to noise difference"
+  file "data/cnr.csv.gz" => ["contrast_to_noise.py", "data/cropped_reconstruction.h5"] do |f|
+    sh "python #{f.source} #{f.prerequisites[1]} #{f.name}"
   end
 
 end
@@ -47,5 +47,19 @@ namespace :video do
 
   desc "save videos"
   task :all => ["data/absorption.mp4", "data/ratio.mp4"]
+
+end
+
+namespace :plot do
+
+  desc "plot position with R"
+  file "data/position.png" => ["plot_position.R", "data/counts.csv"] do |f|
+    sh "./#{f.source} -f #{f.prerequisites[1]} -o #{f.name}"
+  end
+
+  desc "plot contrast to noise difference"
+  file "data/cnr.ratio.png" => ["contrast_to_noise.R", "data/cnr.csv.gz"] do |f|
+    sh "./#{f.source} -f #{f.prerequisites[1]} -o #{f.name} -p data/cnr.absorption.png"
+  end
 
 end
