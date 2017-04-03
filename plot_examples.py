@@ -85,7 +85,7 @@ def main(input_file, output_file, n):
         ratio_axes.set_frame_on(False)
         ratio_axes.axes.xaxis.set_ticks([])
         ratio_axes.axes.yaxis.set_ticks([])
-        plt.savefig(output_file, bbox_inches="tight", dpi=120)
+        plt.savefig(output_file, bbox_inches="tight", dpi=300)
         # plt.show()
         # plt.ion()
         # input()
