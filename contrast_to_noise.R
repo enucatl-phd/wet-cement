@@ -68,7 +68,7 @@ absorption_plot = ggplot(molten[variable == "absorption"]) +
     geom_density(aes(value, fill=status), alpha=0.4) +
     scale_fill_discrete(name=paste("CNR =", round(absorption.cnr, 2))) +
     xlab("-log(absorption)") +
-    xlim(0.2, 0.6)
+    xlim(0.3, 0.6)
 
 print(ratio_plot)
 print(absorption_plot)
