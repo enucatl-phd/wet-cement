@@ -62,4 +62,18 @@ namespace :plot do
     sh "./#{f.source} -f #{f.prerequisites[1]} -o #{f.name} -p data/cnr.absorption.png"
   end
 
+  file "data/0.png" => ["plot_examples.py", "data/filtered_reconstruction.h5"] do |f|
+    sh "python #{f.source} #{f.prerequisites[1]} #{f.name} -n 0"
+  end
+
+  file "data/100.png" => ["plot_examples.py", "data/filtered_reconstruction.h5"] do |f|
+    sh "python #{f.source} #{f.prerequisites[1]} #{f.name} -n 100"
+  end
+
+  file "data/200.png" => ["plot_examples.py", "data/filtered_reconstruction.h5"] do |f|
+    sh "python #{f.source} #{f.prerequisites[1]} #{f.name} -n 200"
+  end
+
+  desc "plot example images"
+  task :examples => ["data/0.png", "data/100.png", "data/200.png"]
 end

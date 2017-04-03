@@ -1,5 +1,7 @@
-data
-*.mp4
+data/*.h5
+data/*.csv
+data/*.gz
+data/*.mp4
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
