@@ -33,17 +33,18 @@ args = commandline_parser$parse_args()
 table = fread(args$f)
 print(table)
 
-table[, time := as.POSIXct(time, origin="1970-01-01")]
+time_origin = table[1, time]
+print(time_origin)
+table[, sqrttime := sqrt(time - time_origin)]
 
-plot = ggplot(table) +
-    geom_point(aes(x=time, y=wet_fraction), size=1) +
-    scale_x_datetime(
-        breaks=date_breaks("30 min"),
-        labels=date_format("%H:%M")
-        )
+plot = ggplot(table, aes(x=sqrttime, y=wet_fraction)) +
+    geom_point(size=1) + 
+    geom_smooth(data=table[sqrttime > 15 & sqrttime < 90], method='lm') +
+    xlab(expression(sqrt(t (s)))) +
+    ylab("water infiltration (relative)")
 
 print(plot)
-width = 7
+width = 4
 aspect.ratio = 1
 height = width * aspect.ratio
 ggsave(args$o, plot, width=width, height=height, dpi=300)

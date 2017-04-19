@@ -62,7 +62,7 @@ print(ratio.cnr)
 ratio_plot = ggplot(molten[variable == "ratio"]) +
     geom_density(aes(value, fill=status), alpha=0.4) +
     scale_fill_discrete(name=paste("CNR =", round(ratio.cnr, 2))) +
-    xlab("log(dark-field) / log(absorption)") +
+    xlab("log(dark field) / log(absorption)") +
     xlim(0, 3)
 absorption_plot = ggplot(molten[variable == "absorption"]) +
     geom_density(aes(value, fill=status), alpha=0.4) +
@@ -72,7 +72,7 @@ absorption_plot = ggplot(molten[variable == "absorption"]) +
 
 print(ratio_plot)
 print(absorption_plot)
-width = 7
+width = 4
 aspect.ratio = 1
 height = width * aspect.ratio
 ggsave(args$o, ratio_plot, width=width, height=height, dpi=300)
