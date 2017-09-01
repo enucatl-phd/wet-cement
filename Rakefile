@@ -37,16 +37,10 @@ end
 
 namespace :video do
   
-  file "data/absorption.mp4" => ["create_video.py", "data/filtered_reconstruction.h5"] do |f|
-    sh "python #{f.source} #{f.prerequisites[1]} #{f.name} 0"
+  desc "save video"
+  file "data/video.mp4" => ["create_video.py", "data/filtered_reconstruction.h5"] do |f|
+    sh "python #{f.source} #{f.prerequisites[1]} #{f.name}"
   end
-
-  file "data/ratio.mp4" => ["create_video.py", "data/filtered_reconstruction.h5"] do |f|
-    sh "python #{f.source} #{f.prerequisites[1]} #{f.name} 2"
-  end
-
-  desc "save videos"
-  task :all => ["data/absorption.mp4", "data/ratio.mp4"]
 
 end
 
