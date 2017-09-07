@@ -4,7 +4,10 @@ import h5py
 from scipy import stats
 import matplotlib.pyplot as plt
 import matplotlib.animation as manimation
+from matplotlib import ticker
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 from tqdm import tqdm
+from matplotlib.patches import Rectangle
 
 
 @click.command()
@@ -17,10 +20,12 @@ def main(input_file, output_file):
             "title": "concrete sample",
         }
         writer = FFMpegWriter(fps=5, metadata=metadata)
-        figure = plt.figure()
-        ax = figure.add_subplot(111)
-        plt.tight_layout()
-        dataset_names = list(input_h5_file.keys())[0:20]
+        figure, (ax, ratio_ax) = plt.subplots(1, 2)
+        plt.subplots_adjust(
+            wspace=0.02,
+            hspace=0.02)
+        plt.subplots_adjust(top=0.8)
+        dataset_names = list(input_h5_file.keys())
         abs_dataset = input_h5_file[dataset_names[0]][..., 0]
         ratio_dataset = input_h5_file[dataset_names[0]][..., 2]
         limits = [
@@ -32,13 +37,40 @@ def main(input_file, output_file):
             abs_dataset,
             interpolation="none",
             clim=limits[0])
-        cbar = figure.colorbar(im, ax=ax)
-        ratio_ax = plt.add_subplot(112)
+        ax.tick_params(
+            axis='both', which='both', bottom='off', top='off',
+            labelbottom='off', right='off', left='off',
+            labelleft='off')
+        ax.add_patch(Rectangle((37, 13), 30, 5, facecolor="red"))
+        ax.text(52, 23, "1 mm", ha="center", va="top", color="red")
+        ax.set_frame_on(False)
+        ratio_ax.set_frame_on(False)
+        ratio_ax.tick_params(
+            axis='both', which='both', bottom='off', top='off',
+            labelbottom='off', right='off', left='off',
+            labelleft='off')
+        abs_divider = make_axes_locatable(ax)
+        abs_cax = abs_divider.append_axes(
+            "left", size="5%", pad=0.05)
+        cbar = plt.colorbar(im, cax=abs_cax)
+        cbar.ax.yaxis.set_ticks_position("left")
+        abs_tick_locator = ticker.MaxNLocator(nbins=4)
+        cbar.locator = abs_tick_locator
+        cbar.update_ticks()
+        ax.set_title(r"$-\log(\mathrm{transmission})$")
+        ratio_ax.set_title(
+            r"$\frac{\log(\mathrm{vis\, reduction})}{\log(\mathrm{transmission})}$")
         ratio_im = ratio_ax.imshow(
             ratio_dataset,
             interpolation="none",
             clim=limits[2])
-        ratio_cbar = figure.colorbar(ratio_im, ax=ratio_ax)
+        ratio_divider = make_axes_locatable(ratio_ax)
+        ratio_cax = ratio_divider.append_axes(
+            "right", size="5%", pad=0.05)
+        ratio_colorbar = plt.colorbar(ratio_im, cax=ratio_cax)
+        ratio_tick_locator = ticker.MaxNLocator(nbins=4)
+        ratio_colorbar.locator = ratio_tick_locator
+        ratio_colorbar.update_ticks()
 
         def update_img(dataset_name):
             abs_dataset = input_h5_file[dataset_name][..., 0]
